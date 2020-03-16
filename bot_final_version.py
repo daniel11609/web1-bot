@@ -740,7 +740,7 @@ def calendar_selection(update, context):
                               f"wurde in Auftrag gegeben:\n"
                               f"Schuldner: {context.user_data['debtor']}\n"
                               f"Schuld: {debt[0]} - {debt[1]}\n"
-                              f"Deadline: {date[1]}")
+                              f"Deadline: {date[1]}", reply_markup=get_start_keyboard())
 
     # Save debt to json file
     print(date)
