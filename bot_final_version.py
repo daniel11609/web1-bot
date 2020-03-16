@@ -14,7 +14,8 @@ bot.
 
 import logging
 import datetime
-from telegram import (ReplyKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup)
+from telegram import (ReplyKeyboardMarkup, InlineKeyboardButton,
+                      ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup)
 from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters,
                           ConversationHandler, CallbackQueryHandler, CallbackContext)
 from database import Database
@@ -28,93 +29,105 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 
-#initialization of database with FULL path as parameter
+# initialization of database with FULL path as parameter
 db = Database('database.json')  # relative path, database in same folder
 db.init_json()
 DEBTBASE = db.debts
 TEST_MODE = True
 
 # Range Array for conversation handler
-USER_SELECTION, CATEGORY_SELECTION, AMOUNT_SELECTION, CALENDAR_SELECTION, CHOOSING_DEBT, ASK_IF_DEBT_IS_PAID, CHOOSING_CLAIM, ASK_IF_CLAIM_IS_PAID = range(8)
-UPDATER = Updater("###", use_context=True)
+USER_SELECTION, CATEGORY_SELECTION, AMOUNT_SELECTION, CALENDAR_SELECTION, CHOOSING_DEBT, ASK_IF_DEBT_IS_PAID, CHOOSING_CLAIM, ASK_IF_CLAIM_IS_PAID = range(
+    8)
+UPDATER = Updater(
+    "1117353580:AAGS4amHBzBbydCX2edeBO2CduvGiABskjs", use_context=True)
 
 
-#region registration of users neu
+# region registration of users neu
 def start(update, context):
-    #Username that addresses the bot is written on "name"
+    # Username that addresses the bot is written on "name"
     name = update.message.from_user.first_name
     chat_ID = str(update.effective_message.chat_id)
-    
+
     registrated = db.user_exists(chat_ID)
     if(registrated):
-        update.message.reply_text('Hey ' + name + '!' + '\nWillkommen zurück!'+'\U0001F60F')
-        
-        startMenu(update, context) #startMenue in startMenu!!!!!
-    else:
-        #Bot answer: Greets the user by name
-        update.message.reply_text('Hey ' + name + '!' + '\nWillkommen bei Deinem lokalen Anbieter für Schuldeneintreibung!'+
-        '\U0001F60F')
-        #Create Yes and No button for query
-        keyboardYN =  [[InlineKeyboardButton("\U0001F44D", callback_data='yes'), #keyboardJN in keyboardYN geändert!!!
-                       InlineKeyboardButton("\U0001F44E", callback_data='no')]]
-        reply_markup = InlineKeyboardMarkup(keyboardYN) #create keybard
-        update.message.reply_text('Möchtest Du dich registrieren?', reply_markup = reply_markup)
-        UPDATER.dispatcher.add_handler(CallbackQueryHandler(button)) #registration
+        update.message.reply_text(
+            'Hey ' + name + '!' + '\nWillkommen zurück!'+'\U0001F60F', reply_markup=get_start_keyboard())
 
-#Start menu to select what you want to do (enter debts, - settle)
+    else:
+        # Bot answer: Greets the user by name
+        update.message.reply_text('Hey ' + name + '!' + '\nWillkommen bei Deinem lokalen Anbieter für Schuldeneintreibung!' +
+                                  '\U0001F60F')
+        # Create Yes and No button for query
+        keyboardYN = [[InlineKeyboardButton("\U0001F44D", callback_data='yes'),  # keyboardJN in keyboardYN geändert!!!
+                       InlineKeyboardButton("\U0001F44E", callback_data='no')]]
+        reply_markup = InlineKeyboardMarkup(keyboardYN)  # create keybard
+        update.message.reply_text(
+            'Möchtest Du dich registrieren?', reply_markup=reply_markup)
+        UPDATER.dispatcher.add_handler(
+            CallbackQueryHandler(button))  # registration
+
+# Start menu to select what you want to do (enter debts, - settle)
+
+
 def startMenu(update, context):
     query = update.callback_query
     bot = context.bot
-    #import Username + ChatId 
+    # import Username + ChatId
     chat_ID = str(query.from_user.id)
     user_name = str(query.from_user.username)
 
     bot.edit_message_text(
-        #generate startmenu
-        chat_id = query.message.chat_id,
-        message_id = query.message.message_id,
-        text = "Bitte wähle dein Anliegen aus:")
+        # generate startmenu
+        chat_id=query.message.chat_id,
+        message_id=query.message.message_id,
+        text="Bitte wähle dein Anliegen aus:")
 
-    context.bot.send_message(query.from_user.id, text="Klicke auf \u27A1 /schuld um Schulden einzutragen...")
-    context.bot.send_message(query.from_user.id, text="Klicke auf \u27A1 /ichSchulde um einzusehen, wem du was schuldest...")
-    context.bot.send_message(query.from_user.id, text="Klicke auf \u27A1 /ichBekomme um einzusehen, was dir wer schuldet...")
+    context.bot.send_message(
+        query.from_user.id, text="Klicke auf \u27A1 /schuld um Schulden einzutragen...\n"
+        "Klicke auf \u27A1 /ichSchulde um einzusehen, wem du was schuldest..."
+        "\nKlicke auf \u27A1 /ichBekomme um einzusehen, was dir wer schuldet...", reply_markup=get_start_keyboard())
 
-    
-#Forward to next window
+
+def get_start_keyboard():
+
+    return ReplyKeyboardMarkup([['/schuld'], ['/ichBekomme'], ['/ichSchulde']])
+
+
+# Forward to next window
 def button(update, context):
     query = update.callback_query
 
-    #if 'yes' the user will be registratet and is forwarded to the start menu
-    if query.data == 'yes': 
+    # if 'yes' the user will be registratet and is forwarded to the start menu
+    if query.data == 'yes':
         startMenu(update, context)
-        #edited
+        # edited
         chat_ID = str(query.message.chat_id)
         user_name = str(query.from_user.username)
         db.add_user(chat_ID, user_name)
         # if no , no registration
     elif query.data == 'no':
         cancel(update, context)
-        
-    
 
-#close the chat
-def cancel(update, context): #abbruch in  cancel!!!!!!
+
+# close the chat
+def cancel(update, context):  # abbruch in  cancel!!!!!!
     query = update.callback_query
     bot = context.bot
-    #Closing text
+    # Closing text
     bot.edit_message_text(
         chat_id=query.message.chat_id,
         message_id=query.message.message_id,
         text="Schade!" + "\nFalls Du es dir anders überlegst, kannst du mit /start den Prozess neu starten." + "\U0001F47C"
     )
     return ConversationHandler.END
-        
-#zeigt Fehlermeldungen an
-#def error(update, context):
-    #logger.warning('Update "%s" caused error "%s"', update, context.error)
-#endregion
 
-#region Timer
+# zeigt Fehlermeldungen an
+# def error(update, context):
+    #logger.warning('Update "%s" caused error "%s"', update, context.error)
+# endregion
+
+# region Timer
+
 
 '''
 Changelog: 
@@ -123,12 +136,14 @@ Changelog:
     Added test_interval in start_timer() to simplify adjustments to the TEST_MODE
 '''
 
+
 def set_debtbase(db_val: Database):
     '''
     Set the value of Debtbase
     Params: Database db_val
     '''
     DEBTBASE = db_val
+
 
 def _parse_time_(time):
     '''
@@ -143,7 +158,7 @@ def _parse_time_(time):
     return due
 
 # unnötig, wird nicht mehr verwendet
-#def _days_left_(deadline):
+# def _days_left_(deadline):
 #    '''
 #    Calculates the amount of time between now and a given point in time
 #    Params: datetime deadline
@@ -168,17 +183,15 @@ def _callback_alarm(context: CallbackContext):
 
     deadline = deadline_time.strftime("%d.%m.%Y")
 
+    # todo wurde entfernt, da fehleranfällig, keine beacnhrifhtungen bei abglelaufenen deadline
 
-    #todo wurde entfernt, da fehleranfällig, keine beacnhrifhtungen bei abglelaufenen deadline
-
-    #if _days_left_(deadline_time) < 0:      #Checks whether the debts deadline has been reached
+    # if _days_left_(deadline_time) < 0:      #Checks whether the debts deadline has been reached
     #    context.job.schedule_removal()
 
-    
-    context.bot.send_message(creditor_cid, text=
-                                 str(db.get_user_by_chat_id(debtor_cid).name) + ' schuldet dir noch ' + str(debt_text) + ' bis zum ' + deadline)
-    context.bot.send_message(debtor_cid, text=
-                                 'Du schuldest ' + str(db.get_user_by_chat_id(creditor_cid).name) + ' noch ' + str(debt_text) + ' bis zum ' + deadline)
+    context.bot.send_message(creditor_cid, text=str(db.get_user_by_chat_id(
+        debtor_cid).name) + ' schuldet dir noch ' + str(debt_text) + ' bis zum ' + deadline)
+    context.bot.send_message(debtor_cid, text='Du schuldest ' + str(db.get_user_by_chat_id(
+        creditor_cid).name) + ' noch ' + str(debt_text) + ' bis zum ' + deadline)
 
 
 def start_timer(tele_updater: UPDATER, debtbase: Database, debt_id):
@@ -190,15 +203,17 @@ def start_timer(tele_updater: UPDATER, debtbase: Database, debt_id):
     '''
     set_debtbase(DEBTBASE)
     cur_debt = db.get_debt_by_debt_id(debt_id)
-    queue = tele_updater.dispatcher.job_queue           #Gets the current job queue of the dispatcher
+    # Gets the current job queue of the dispatcher
+    queue = tele_updater.dispatcher.job_queue
 
     time_zone = datetime.datetime.now().astimezone().tzinfo
     time = datetime.time(hour=10, minute=0, second=0, tzinfo=time_zone)
 
-    test_interval = 20  #sets the time for TEST_MODE in seconds
-    
-    if TEST_MODE:       #TEST_MODUS renamed to TEST_MODE
-        queue.run_repeating(_callback_alarm, test_interval, 0, context=cur_debt)
+    test_interval = 20  # sets the time for TEST_MODE in seconds
+
+    if TEST_MODE:  # TEST_MODUS renamed to TEST_MODE
+        queue.run_repeating(_callback_alarm, test_interval,
+                            0, context=cur_debt)
 
     else:
         queue.run_daily(_callback_alarm, time, context=cur_debt)
@@ -214,16 +229,18 @@ def stop_timer(tele_updater: UPDATER, debt_id):
     '''
     queue = tele_updater.dispatcher.job_queue
 
-    for ajob in queue.jobs():                   #Iterates through all available jobs
+    for ajob in queue.jobs():  # Iterates through all available jobs
         jobdebt_id = ajob.context.debt_id
         if jobdebt_id == debt_id:
             ajob.schedule_removal()
             return True
     return False
 
-#endregion
+# endregion
 
-#region settle debts
+# region settle debts
+
+
 def i_owe(update, context):
     '''Responds to '/ichSchulde' command, starts the conversation flow allowing the user to view and cancel pending debts.
 
@@ -314,7 +331,7 @@ def handle_ask_if_debt_is_paid(update, context):
             f'{creditor} wird verständigt.')
 
         context.bot.send_message(chat_id=debt.creditor,
-                         text=f'Wurde die Schuld über {debt.category} mit der Frist zum {debt.deadline} von {debtor} beglichen?', reply_markup=keyboard)
+                                 text=f'Wurde die Schuld über {debt.category} mit der Frist zum {debt.deadline} von {debtor} beglichen?', reply_markup=keyboard)
 
     else:
         update.effective_message.edit_text('Ok')
@@ -371,7 +388,7 @@ def handle_accept_debt_is_paid(update, context):
         update.effective_message.edit_text(
             'Der Schuldner wurde benachrichtigt. Die Schuld ist noch nicht beglichen.')
         context.bot.send_message(chat_id=debt.debtor,
-                         text=f'{db.get_user_by_chat_id(debt.creditor).name} hat deine Anfrage zum Begleichen von {debt.category} nicht akzeptiert.')
+                                 text=f'{db.get_user_by_chat_id(debt.creditor).name} hat deine Anfrage zum Begleichen von {debt.category} nicht akzeptiert.')
 
     return ConversationHandler.END
 
@@ -386,7 +403,7 @@ def i_get(update, context):
         ConversationHandler.END -- no claims are pending
     '''
 
-    #error CallbackContext has no attribute effective_message
+    # error CallbackContext has no attribute effective_message
     chat_id = update.effective_chat.id
     claims = db.get_open_claims(str(chat_id))
 
@@ -479,11 +496,12 @@ def ask_if_claim_paid(update):
 
     update.effective_message.edit_text(
         'Wurde die Schuld bereits beglichen?', reply_markup=keyboard)
-#endregion
+# endregion
 
 # region define debt
 
 ### helper methods ###
+
 
 def is_User(user):
     """
@@ -525,14 +543,16 @@ def new_debt(update, context):
     context.user_data.clear()
     reply_keyboard = [["Abbrechen ✖"]]
     for _, user in enumerate(get_User_List()):  # adds every user to array
-        if update.effective_chat.id != int(user[0]):  # makes sure active user does not get listed
+        # makes sure active user does not get listed
+        if update.effective_chat.id != int(user[0]):
             reply_keyboard.append(["👤 " + user[1]])
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
-    update.message.reply_text("Bitte wähle einen Benutzer aus:", reply_markup=markup)
+    update.message.reply_text(
+        "Bitte wähle einen Benutzer aus:", reply_markup=markup)
     return USER_SELECTION
 
 
-#region user
+# region user
 
 def user_selection(update, context):
     """
@@ -556,7 +576,7 @@ def user_selection(update, context):
 
 # endregion
 
-#region category
+# region category
 
 def category_selection_back(update, context):
     """
@@ -722,9 +742,9 @@ def calendar_selection(update, context):
     keyboard = InlineKeyboardMarkup([[InlineKeyboardButton(text='Ja', callback_data=f"1,{schuld_obj.debt_id}"),
                                       InlineKeyboardButton(text='Nein', callback_data=f"0,{schuld_obj.debt_id}")]])
     context.bot.send_message(chat_id=debtor_id, text=f"Willst Du folgende Schuld annehmen?\n"
-    f"Gläubiger: {db.get_user_by_chat_id(creditor_id).name}\n"
-    f"Schuld {debt[0]} - {debt[1]}\n"
-    f"Deadline: {date[1]}",
+                             f"Gläubiger: {db.get_user_by_chat_id(creditor_id).name}\n"
+                             f"Schuld {debt[0]} - {debt[1]}\n"
+                             f"Deadline: {date[1]}",
                              reply_markup=keyboard)
 
     context.user_data.clear()
@@ -762,7 +782,8 @@ def date_handler(deadline):
         parts = deadline.split(".")
         # makes sure input is a valid date format
         if len(parts) == 3 and parts[0].isdigit() and parts[1].isdigit() and parts[2].isdigit():
-            date = datetime.datetime.strptime(f"{parts[0]}.{parts[1]}.{parts[2]}", '%d.%m.%Y').date()
+            date = datetime.datetime.strptime(
+                f"{parts[0]}.{parts[1]}.{parts[2]}", '%d.%m.%Y').date()
             # makes sure date is within the next year
             if datetime.date.today() <= date <= (datetime.date.today() + datetime.timedelta(days=365)):
                 return [(parts[2]+":"+parts[1]+":"+parts[0]+""), (parts[0]+"."+parts[1]+"."+parts[2]+"")]
@@ -791,7 +812,8 @@ def handle_accept_debt(update, context):
         update.effective_message.edit_text('Du hast die Schuld abgelehnt.')
         db.set_accepted(query[1], False)
         context.bot.send_message(chat_id=debt.creditor, text=f'{db.get_user_by_chat_id(debt.debtor).name}'
-        f' hat die Schuld über {debt.category} abgelehnt.')
+                                 f' hat die Schuld über {debt.category} abgelehnt.')
+
 
 def done(update, context):
     """
@@ -808,13 +830,13 @@ def callback_general(update, context):
     callback_data = update.callback_query.data
 
     print(json.dumps(callback_data))
-    
+
     if callback_data == 'yes' or callback_data == 'no':
-        #identify registrierung
+        # identify registrierung
         button(update, context)
 
     elif callback_data[1] == ',':
-        #identify schulden begleichen // handle_accept_debt
+        # identify schulden begleichen // handle_accept_debt
         handle_accept_debt(update, context)
 
     elif callback_data[0] == '{':
@@ -823,9 +845,11 @@ def callback_general(update, context):
     else:
         print("Nothing worked at all")
 
+
 def error(update, context):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, context.error)
+
 
 def main():
     # Create the Updater and pass it your bot's token.
@@ -834,8 +858,8 @@ def main():
 
     # Get the dispatcher to register handlers
 
-    #region handler
-    #region se handler
+    # region handler
+    # region se handler
     se_conv_handler = ConversationHandler(
         # conversation handler thread --> /schuld to initiate
         # type of user_selection -> user selection -> category selection -> anzahl selection -> calendar selection
@@ -877,7 +901,7 @@ def main():
                                i_get),
                 MessageHandler(Filters.text,
                                category_type_one)
-                ],
+            ],
             AMOUNT_SELECTION: [MessageHandler(Filters.regex('^Abbrechen ✖$'),
                                               cancel),
                                MessageHandler(Filters.regex('^Abbrechen'),
@@ -916,7 +940,7 @@ def main():
 
         fallbacks=[MessageHandler(Filters.regex('^Done$'), done)]
     )
-    #endregion
+    # endregion
 
     # Handler /ichSchulde
     i_owe_handler = ConversationHandler(
@@ -939,9 +963,7 @@ def main():
         fallbacks=[CommandHandler('ichBekomme', i_get)]
     )
 
-    
-    #endregion
-
+    # endregion
 
     UPDATER.dispatcher.add_handler(CommandHandler('start', start))
     UPDATER.dispatcher.add_handler(se_conv_handler)
@@ -951,13 +973,12 @@ def main():
     # log all errors
     UPDATER.dispatcher.add_error_handler(error)
 
-    #UPDATER.dispatcher.add_handler(CallbackQueryHandler(button)) ##replaced
-    #UPDATER.dispatcher.add_handler(CallbackQueryHandler(handle_accept_debt)) ##replaced
+    # UPDATER.dispatcher.add_handler(CallbackQueryHandler(button)) ##replaced
+    # UPDATER.dispatcher.add_handler(CallbackQueryHandler(handle_accept_debt)) ##replaced
     # Muss als letztes registrated werden!
-    #UPDATER.dispatcher.add_handler(CallbackQueryHandler(handle_accept_debt_is_paid))
-    
+    # UPDATER.dispatcher.add_handler(CallbackQueryHandler(handle_accept_debt_is_paid))
+
     UPDATER.dispatcher.add_handler(CallbackQueryHandler(callback_general))
-    
 
     # Start the Bot
     UPDATER.start_polling()
