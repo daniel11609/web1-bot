@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 db = Database('database.json')  # relative path, database in same folder
 db.init_json()
 DEBTBASE = db.debts
-TEST_MODE = True
+TEST_MODE = False
 
 # Range Array for conversation handler
 USER_SELECTION, CATEGORY_SELECTION, AMOUNT_SELECTION, CALENDAR_SELECTION, CHOOSING_DEBT, ASK_IF_DEBT_IS_PAID, CHOOSING_CLAIM, ASK_IF_CLAIM_IS_PAID = range(
