@@ -708,7 +708,7 @@ def calendar_selection_manual(update, context):
     called when manual calendar selection has been chosen
     --> sends manual calendar selection message
     """
-    update.message.reply_text("Bitte gebe ein gültiges Datum ein (dd.mm.yyy):")
+    update.message.reply_text("Bitte gebe ein gültiges Datum ein (dd.mm.yyyy):")
     return CALENDAR_SELECTION
 
 
