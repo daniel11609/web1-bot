@@ -502,6 +502,14 @@ def ask_if_claim_paid(update):
 
 ### helper methods ###
 
+def cancel_define_debt(update, context):
+    """
+    deletes user data
+    ends conversation handler thread
+    """
+    context.user_data.clear()
+    update.message.reply_text("Breche ab....", reply_markup=get_start_keyboard())
+    return ConversationHandler.END
 
 def is_User(user):
     """
@@ -868,15 +876,17 @@ def main():
 
         states={
             USER_SELECTION: [MessageHandler(Filters.regex('^Abbrechen ✖$'),
-                                            cancel),
+                                            cancel_define_debt),
                              MessageHandler(Filters.regex('^Abbrechen'),
-                                            cancel),
+                                            cancel_define_debt),
                              MessageHandler(Filters.regex('^/schuld'),
                                             new_debt),
                              MessageHandler(Filters.regex('^/ichSchulde'),
                                             i_owe),
                              MessageHandler(Filters.regex('^/ichBekomme'),
                                             i_get),
+                             MessageHandler(Filters.regex('^/start'),
+                                            start),
                              MessageHandler(Filters.text,
                                             user_selection),
                              ],
@@ -888,9 +898,9 @@ def main():
                 MessageHandler(Filters.regex("^Sonstiges 🧳$"),
                                category_type_manual),
                 MessageHandler(Filters.regex('^Abbrechen ✖$'),
-                               cancel),
+                               cancel_define_debt),
                 MessageHandler(Filters.regex('^Abbrechen'),
-                               cancel),
+                               cancel_define_debt),
                 MessageHandler(Filters.regex('^Zurück ↩‍$'),
                                category_selection_back),
                 MessageHandler(Filters.regex('^/schuld'),
@@ -899,13 +909,15 @@ def main():
                                i_owe),
                 MessageHandler(Filters.regex('^/ichBekomme'),
                                i_get),
+                MessageHandler(Filters.regex('^/start'),
+                               start),
                 MessageHandler(Filters.text,
                                category_type_one)
             ],
             AMOUNT_SELECTION: [MessageHandler(Filters.regex('^Abbrechen ✖$'),
-                                              cancel),
+                                              cancel_define_debt),
                                MessageHandler(Filters.regex('^Abbrechen'),
-                                              cancel),
+                                              cancel_define_debt),
                                MessageHandler(Filters.regex("^Sonstiges 📝$"),
                                               amount_selection_manual),
                                MessageHandler(Filters.regex('^Zurück ↩‍$'),
@@ -916,13 +928,15 @@ def main():
                                               i_owe),
                                MessageHandler(Filters.regex('^/ichBekomme'),
                                               i_get),
+                               MessageHandler(Filters.regex('^/start'),
+                                              start),
                                MessageHandler(Filters.text,
                                               amount_selection)
                                ],
             CALENDAR_SELECTION: [MessageHandler(Filters.regex('^Abbrechen ✖$'),
-                                                cancel),
+                                                cancel_define_debt),
                                  MessageHandler(Filters.regex('^Abbrechen'),
-                                                cancel),
+                                                cancel_define_debt),
                                  MessageHandler(Filters.regex("^Sonstiges 🗓$"),
                                                 calendar_selection_manual),
                                  MessageHandler(Filters.regex('^Zurück ↩‍$'),
@@ -933,6 +947,8 @@ def main():
                                                 i_owe),
                                  MessageHandler(Filters.regex('^/ichBekomme'),
                                                 i_get),
+                                 MessageHandler(Filters.regex('^/start'),
+                                                start),
                                  MessageHandler(Filters.text,
                                                 calendar_selection),
                                  ],
