@@ -6,6 +6,7 @@ The debt module contains the class of a debt.
 Each unique debt is stored as a debt object.
 """
 
+
 class Debt:
     """
     The debt class contains attributes of a debt.
@@ -21,7 +22,6 @@ class Debt:
         self.debtor = debtor
         self.is_accepted = is_accepted
         self.is_paid = is_paid
-
 
     def to_dict(self):
         """Returns debt attributes as dict.
@@ -40,7 +40,6 @@ class Debt:
             'is_accepted': self.is_accepted,
             'is_paid': self.is_paid
         }
-
 
     @staticmethod
     def from_dict(debt_as_dict):
@@ -62,4 +61,3 @@ class Debt:
             debt_as_dict['is_accepted'],
             debt_as_dict['is_paid']
         )
-        
