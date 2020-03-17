@@ -279,12 +279,14 @@ def send_debt_list_to_user(update, debts, text):
         update.effective_message.reply_text(
             'Es sind keine offenen Einträge vorhanden')
         return False
+    buttons = []
+    for debt in debts:
+        date_parts = debt.deadline.split(":")
+        deadline = f"{date_parts[2]}.{date_parts[1]}.{date_parts[0]}"
+        buttons.append(InlineKeyboardButton(f'{debt.category} an '
+            f'{db.get_user_by_chat_id(debt.creditor).name} bis {deadline}', callback_data=debt.debt_id))
 
-    buttons = [[InlineKeyboardButton(
-        f'{debt.category} an {db.get_user_by_chat_id(debt.creditor).name} bis {debt.deadline}', callback_data=debt.debt_id)] for debt in debts]
-    keyboard = InlineKeyboardMarkup(buttons)
-
-    update.effective_message.reply_text(text, reply_markup=keyboard)
+    update.effective_message.reply_text(text, reply_markup=InlineKeyboardMarkup(buttons))
     return True
 
 
