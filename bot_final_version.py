@@ -283,8 +283,8 @@ def send_debt_list_to_user(update, debts, text):
     for debt in debts:
         date_parts = debt.deadline.split(":")
         deadline = f"{date_parts[2]}.{date_parts[1]}.{date_parts[0]}"
-        buttons.append(InlineKeyboardButton(f'{debt.category} an '
-            f'{db.get_user_by_chat_id(debt.creditor).name} bis {deadline}', callback_data=debt.debt_id))
+        buttons.append([InlineKeyboardButton(f'{debt.category} an '
+            f'{db.get_user_by_chat_id(debt.creditor).name} bis {deadline}', callback_data=debt.debt_id)])
 
     update.effective_message.reply_text(text, reply_markup=InlineKeyboardMarkup(buttons))
     return True
