@@ -21,8 +21,6 @@ from telegram import (ReplyKeyboardMarkup,
 from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters,
                           ConversationHandler, CallbackQueryHandler, CallbackContext)
 from database import Database
-from debt import Debt
-from user import User
 
 
 # Enable logging
