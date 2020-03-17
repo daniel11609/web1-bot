@@ -889,7 +889,8 @@ def date_handler(deadline):
                 f"{parts[0]}.{parts[1]}.{parts[2]}", "%d.%m.%Y").date()
 
             # makes sure date is within the next year
-            if datetime.date.today() <= date <= (datetime.date.today() + datetime.timedelta(days=365)):
+            if (datetime.date.today()
+                    <= date <= (datetime.date.today() + datetime.timedelta(days=365))):
                 return [
                     (parts[2]+":"+parts[1]+":"+parts[0] +
                      ""), (parts[0]+"."+parts[1]+"."+parts[2]+"")
@@ -901,7 +902,7 @@ def date_handler(deadline):
 
 # endregion calendar
 
-###accept debt###
+
 def handle_accept_debt(update, context):
     """
     handles user input from acccept/deny debt
@@ -937,10 +938,9 @@ def done(update, context):
     return ConversationHandler.END
 # endregion
 
-# todo missing docstring
-
 
 def callback_general(update, context):
+    # todo missing docstring
     """
     #todo missing docstring
     """
