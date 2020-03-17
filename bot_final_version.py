@@ -190,7 +190,7 @@ def _callback_alarm(context: CallbackContext):
     """
     cur_debt = context.job.context
 
-    debt_id = cur_debt.debt_id
+    debt_id = cur_debt.debt_id  # todo unused variable
     creditor_cid = cur_debt.creditor
     debtor_cid = cur_debt.debtor
     deadline_time = _parse_time_(cur_debt.deadline)
@@ -198,8 +198,7 @@ def _callback_alarm(context: CallbackContext):
 
     deadline = deadline_time.strftime("%d.%m.%Y")
 
-    # todo wurde entfernt, da fehleranfällig, keine beacnhrifhtungen bei abglelaufenen deadline
-
+    # todo not needed
     # if _days_left_(deadline_time) < 0:      #Checks whether the debts deadline has been reached
     #    context.job.schedule_removal()
 
@@ -970,7 +969,7 @@ def error(update, context):
 # todo main docstring
 def main():
     """
-# todo main docstring
+    todo main docstring
 
     """
 
