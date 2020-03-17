@@ -13,11 +13,9 @@ class User:
     These can be returned as dictionary entries.
     """
 
-
     def __init__(self, chat_id, name):
         self.chat_id = chat_id
         self.name = name
-
 
     def to_dict(self):
         """Returns user attributes as dict.
@@ -29,7 +27,6 @@ class User:
             'chat_id': self.chat_id,
             'name': self.name
         }
-
 
     @staticmethod
     def from_dict(user_as_dict):
