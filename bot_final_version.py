@@ -957,7 +957,7 @@ def callback_general(update, context):
 
         handle_accept_debt_is_paid(update, context)
 
-    if ("yes" or "no") in callback_data:  # in json ändern
+    if "yes" in callback_data or "no" in callback_data:  # in json ändern
 
         print(callback_data)
         handle_registration_response(update, context)
