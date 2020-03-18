@@ -1,12 +1,12 @@
 steps:
 # Build the container image
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/[python-telegram-bot-269318]/[latest]', '.']
+  args: ['build', '-t', 'gcr.io/[python-telegram-bot-269318]/[web1-bot]', '.']
 # Push the image to Container Registry
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/[python-telegram-bot-269318]/[latest]']
+  args: ['push', 'gcr.io/[python-telegram-bot-269318]/[web1-bot]']
 # Deploy image to Cloud Run
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['beta', 'run', 'deploy', '[web1]', '--image', 'gcr.io/[python-telegram-bot-269318]/[latest]', '--region', '[us-central1]', '--platform', 'managed', '--allow-unauthenticated']
+  args: ['beta', 'run', 'deploy', '[web1]', '--image', 'gcr.io/[python-telegram-bot-269318]/[web1-bot]', '--region', '[us-central1]', '--platform', 'managed', '--allow-unauthenticated']
 images:
-- gcr.io/[python-telegram-bot-269318]/[latest]
+- gcr.io/[python-telegram-bot-269318]/[web1-bot]
