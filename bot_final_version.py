@@ -351,8 +351,8 @@ def handle_ask_if_debt_is_paid(update, context):
     data_no = json.dumps({'paid': False, 'id': debt_id})
 
     print(data_yes, data_no)
-    keyboard = InlineKeyboardMarkup([[InlineKeyboardButton('Ja', callback_data=data_yes),
-                                      InlineKeyboardButton('Nein', callback_data=data_no)]])
+    keyboard = InlineKeyboardMarkup([[InlineKeyboardButton('\U0001F44D', callback_data=data_yes),
+                                      InlineKeyboardButton('\U0001F44E', callback_data=data_no)]])
 
     if is_paid:
         update.effective_message.edit_text(
@@ -383,8 +383,8 @@ def ask_if_debt_paid(update):
     data_yes = json.dumps({'paid': True, 'id': update.callback_query.data})
     data_no = json.dumps({'paid': False, 'id': update.callback_query.data})
 
-    keyboard = InlineKeyboardMarkup([[InlineKeyboardButton('Ja', callback_data=data_yes),
-                                      InlineKeyboardButton('Nein', callback_data=data_no)]])
+    keyboard = InlineKeyboardMarkup([[InlineKeyboardButton('\U0001F44D', callback_data=data_yes),
+                                      InlineKeyboardButton('\U0001F44E', callback_data=data_no)]])
 
     update.effective_message.edit_text(
         'Hast du die Schuld bereits beglichen?', reply_markup=keyboard)
@@ -509,9 +509,11 @@ def send_claim_list_to_user(update, claims, text):
     for debt in claims:
         date_parts = debt.deadline.split(":")
         deadline = f"{date_parts[2]}.{date_parts[1]}.{date_parts[0]}"
+
         buttons.append([InlineKeyboardButton(
             f'{debt.category} von  {(DB.get_user_by_chat_id(debt.debtor)).name} '
-            f'bis {deadline}', callback_data=debt.debt_id)])
+            f'bis {deadline}',
+            callback_data=debt.debt_id)])
 
     update.effective_message.reply_text(
         text, reply_markup=InlineKeyboardMarkup(buttons))
@@ -531,8 +533,8 @@ def ask_if_claim_paid(update):
     data_yes = json.dumps({'paid': True, 'id': update.callback_query.data})
     data_no = json.dumps({'paid': False, 'id': update.callback_query.data})
 
-    keyboard = InlineKeyboardMarkup([[InlineKeyboardButton('Ja', callback_data=data_yes),
-                                      InlineKeyboardButton('Nein', callback_data=data_no)]])
+    keyboard = InlineKeyboardMarkup([[InlineKeyboardButton('\U0001F44D', callback_data=data_yes),
+                                      InlineKeyboardButton('\U0001F44E', callback_data=data_no)]])
 
     update.effective_message.edit_text(
         'Wurde die Schuld bereits beglichen?', reply_markup=keyboard)
@@ -826,10 +828,10 @@ def calendar_selection(update, context):
     keyboard = InlineKeyboardMarkup(
         [
             [InlineKeyboardButton(
-                text="Ja", callback_data=f"1,{schuld_obj.debt_id}"),
+                text="\U0001F44D", callback_data=f"1,{schuld_obj.debt_id}"),
 
              InlineKeyboardButton(
-                 text="Nein", callback_data=f"0,{schuld_obj.debt_id}")]
+                 text="\U0001F44E", callback_data=f"0,{schuld_obj.debt_id}")]
         ]
     )
 

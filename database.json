@@ -1,1 +1,24 @@
-{"users": [{"chat_id": "1033904435", "name": "tobias_mayer"}, {"chat_id": "49881767", "name": "daniel11609"}, {"chat_id": "1095327404", "name": "timb2001"}], "debts": [{"debt_id": "9117a473-6528-11ea-a360-24ee9a6824d6", "creditor": "1033904435", "category": "Getr\u00e4nke", "amount": "7.5\u20ac", "deadline": "2020:04:12", "debtor": "49881767", "is_accepted": false, "is_paid": false}, {"debt_id": "9c8adb44-6528-11ea-87f2-24ee9a6824d6", "creditor": "49881767", "category": "Gefallen", "amount": "10\u20ac", "deadline": "2020:03:14", "debtor": "1033904435", "is_accepted": true, "is_paid": true}, {"debt_id": "bd613324-6528-11ea-9ac8-24ee9a6824d6", "creditor": "49881767", "category": "Geld", "amount": "1\u20ac", "deadline": "2020:04:12", "debtor": "1033904435", "is_accepted": false, "is_paid": false}, {"debt_id": "259d9771-652a-11ea-a0e0-24ee9a6824d6", "creditor": "49881767", "category": "Getr\u00e4nke", "amount": "1\u20ac", "deadline": "2020:03:13", "debtor": "1033904435", "is_accepted": true, "is_paid": true}, {"debt_id": "2afbd53b-652a-11ea-8751-24ee9a6824d6", "creditor": "49881767", "category": "Gefallen", "amount": "5\u20ac", "deadline": "2020:03:20", "debtor": "1033904435", "is_accepted": true, "is_paid": true}, {"debt_id": "b1376bb7-652b-11ea-b834-24ee9a6824d6", "creditor": "49881767", "category": "Getr\u00e4nke", "amount": "1\u20ac", "deadline": "2020:03:13", "debtor": "1033904435", "is_accepted": true, "is_paid": true}, {"debt_id": "483b0e5f-652c-11ea-8ba8-24ee9a6824d6", "creditor": "49881767", "category": "Getr\u00e4nke", "amount": "1\u20ac", "deadline": "2020:03:13", "debtor": "1033904435", "is_accepted": true, "is_paid": true}, {"debt_id": "9cee8c12-652e-11ea-83c8-24ee9a6824d6", "creditor": "49881767", "category": "Getr\u00e4nke", "amount": "1\u20ac", "deadline": "2020:03:13", "debtor": "1033904435", "is_accepted": true, "is_paid": true}, {"debt_id": "ba39187e-652e-11ea-9481-24ee9a6824d6", "creditor": "49881767", "category": "Getr\u00e4nke", "amount": "1\u20ac", "deadline": "2020:03:13", "debtor": "1033904435", "is_accepted": true, "is_paid": true}, {"debt_id": "44f04304-6530-11ea-9787-24ee9a6824d6", "creditor": "49881767", "category": "Gefallen", "amount": "1\u20ac", "deadline": "2020:03:13", "debtor": "1033904435", "is_accepted": true, "is_paid": true}, {"debt_id": "5c6c854c-6530-11ea-9338-24ee9a6824d6", "creditor": "49881767", "category": "Getr\u00e4nke", "amount": "1\u20ac", "deadline": "2020:03:14", "debtor": "1033904435", "is_accepted": true, "is_paid": true}, {"debt_id": "ab1270d3-6530-11ea-bc99-24ee9a6824d6", "creditor": "49881767", "category": "Gefallen", "amount": "5\u20ac", "deadline": "2020:03:20", "debtor": "1033904435", "is_accepted": true, "is_paid": false}, {"debt_id": "b0303ceb-6530-11ea-a963-24ee9a6824d6", "creditor": "49881767", "category": "Essen", "amount": "1\u20ac", "deadline": "2020:03:15", "debtor": "1033904435", "is_accepted": true, "is_paid": false}, {"debt_id": "4dadc8b0-654b-11ea-a4f1-d76f3f3fa51d", "creditor": "1095327404", "category": "Haushalt", "amount": "3\u20ac", "deadline": "2020:03:14", "debtor": "49881767", "is_accepted": false, "is_paid": false}]}
+{
+    "users": [
+        {
+            "chat_id": "49881767",
+            "name": "daniel11609"
+        },
+        {
+            "chat_id": "1095327404",
+            "name": "timb2001"
+        }
+    ],
+    "debts": [
+        {
+            "debt_id": "2a6e759a-6912-11ea-96f8-2c4d54d11061",
+            "creditor": "49881767",
+            "category": "Getr\u00e4nke",
+            "amount": "1\u20ac",
+            "deadline": "2020:03:25",
+            "debtor": "1095327404",
+            "is_accepted": true,
+            "is_paid": false
+        }
+    ]
+}
