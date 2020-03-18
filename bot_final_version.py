@@ -47,34 +47,50 @@ UPDATER = Updater(
 
 
 def start(update, context):
-    """/start command,
-    user registration, sends main menu keyboard
+    """handles /start command,
+    user registration
     """
-
-    # Username that addresses the bot is written on "name"
-    name = update.message.from_user.first_name
+    username = update.message.from_user.username
+    first_name = update.message.from_user.first_name
     chat_id = str(update.effective_message.chat_id)
 
-    registrated = DB.user_exists(chat_id)
-    if registrated:
+    is_registrated = DB.user_exists(chat_id)
+
+    # sends keyboard to existing users
+    if is_registrated:
         update.message.reply_text(
-            "Hey " + name + "!" + "\nWillkommen zurück!"+"\U0001F60F",
+            "Hey " + first_name + "!" + "\nWillkommen zurück!"+"\U0001F609",
             reply_markup=get_start_keyboard())
 
+    # user not registrated
     else:
-        # Bot answer: Greets the user by name
+        # welcome message, new users
         update.message.reply_text(
-            "Hey " + name + "!" +
+            "Hey " + first_name + "!" +
             "\nWillkommen bei Deinem lokalen Anbieter für Schuldeneintreibung!" +
-            "\U0001F60F")
-        # Create Yes and No button for query
-        keyboard_yn = [[InlineKeyboardButton("\U0001F44D", callback_data="yes"),
-                        InlineKeyboardButton("\U0001F44E", callback_data="no")]]
-        reply_markup = InlineKeyboardMarkup(keyboard_yn)  # create keyboard
-        update.message.reply_text(
-            "Möchtest Du dich registrieren?", reply_markup=reply_markup)
-        UPDATER.dispatcher.add_handler(
-            CallbackQueryHandler(button))  # registration
+            "\U0001F609")
+
+        # Asks user to setup his username
+        if username is None:
+            update.message.reply_text(
+                "Achtung: Um unseren Service nutzen zu können, benötigst du einen Telegram Username.\n"
+                "Diesen kannst du unter \"Einstellungen -> Benutzername\" festlegen.\n"
+                "Du kannst dich anschließend mit /start registrieren!")
+
+            # Registration
+
+        else:
+
+            # yes / no keyboard
+            keyboard_yn = [[InlineKeyboardButton("\U0001F44D", callback_data="yes"),
+                            InlineKeyboardButton("\U0001F44E", callback_data="no")]]
+            reply_markup = InlineKeyboardMarkup(keyboard_yn)
+
+            update.message.reply_text(
+                "Möchtest Du dich registrieren?", reply_markup=reply_markup)
+
+            UPDATER.dispatcher.add_handler(
+                CallbackQueryHandler(button))
 
 
 def start_menu(update, context):
@@ -90,7 +106,7 @@ def start_menu(update, context):
         # generate startmenu
         chat_id=chat_id,
         message_id=query.message.message_id,
-        text="Bitte wähle dein Anliegen aus:")
+        text="Bitte wähle dein Anliegen aus:\n")
 
     context.bot.send_message(
         chat_id, text="Klicke auf \u27A1 /schuld um Schulden einzutragen...\n"
