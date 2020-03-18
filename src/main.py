@@ -48,6 +48,7 @@ BOT_HTTP_TOKEN = os.environ.get('schuldestmirbot')
 UPDATER = Updater(BOT_HTTP_TOKEN, use_context=True)
 
 
+
 def start(update, context):
     """handles /start command,
     user registration
