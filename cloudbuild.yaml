@@ -1,7 +1,7 @@
 steps:
 # Build the container image
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/[python-telegram-bot-269318]/[gcr.io/python-telegram-bot-269318/web1-bot]', '.']
+  args: ['build', '-t', 'gcr.io/[python-telegram-bot-269318]/[gcr.io/python-telegram-bot-269318/web1-bot:latest]', '.']
 # Push the image to Container Registry
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/[python-telegram-bot-269318]/[gcr.io/python-telegram-bot-269318/web1-bot:latest]']
