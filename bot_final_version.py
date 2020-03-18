@@ -12,7 +12,10 @@ Press Ctrl-C on the command line or send a signal to the process to stop the
 bot.
 """
 
-import logging, datetime, json, os
+import logging
+import datetime
+import json
+import os
 
 
 from telegram import (ReplyKeyboardMarkup,
@@ -37,11 +40,10 @@ TIMER_TEST_MODE = True
 BOT_HTTP_TOKEN = os.environ.get('schuldestmirbot')
 
 # Range Array for conversation handler
-[
-    USER_SELECTION, CATEGORY_SELECTION,
-    AMOUNT_SELECTION, CALENDAR_SELECTION,
-    CHOOSING_DEBT, ASK_IF_DEBT_IS_PAID,
-    CHOOSING_CLAIM, ASK_IF_CLAIM_IS_PAID] = range(8)
+[USER_SELECTION, CATEGORY_SELECTION,
+ AMOUNT_SELECTION, CALENDAR_SELECTION,
+ CHOOSING_DEBT, ASK_IF_DEBT_IS_PAID,
+ CHOOSING_CLAIM, ASK_IF_CLAIM_IS_PAID] = range(8)
 
 UPDATER = Updater(BOT_HTTP_TOKEN, use_context=True)
 
