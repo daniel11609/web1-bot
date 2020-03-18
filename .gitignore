@@ -137,3 +137,5 @@ dmypy.json
 #game data / json files
 .deepsource.toml
 database.json
+
+.vscode/
