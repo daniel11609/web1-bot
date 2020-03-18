@@ -89,7 +89,7 @@ def start(update, context):
                 "Möchtest Du dich registrieren?", reply_markup=reply_markup)
 
             UPDATER.dispatcher.add_handler(
-                CallbackQueryHandler(button))
+                CallbackQueryHandler(handle_registration_response))
 
 
 def start_menu(update, context):
@@ -121,20 +121,20 @@ def get_start_keyboard():
     return ReplyKeyboardMarkup([["/schuld"], ["/ichBekomme"], ["/ichSchulde"]])
 
 
-def button(update, context):
-    """Forward to next window
+def handle_registration_response(update, context):
+    """checks wether user wants to be registered or not
     """
 
     query = update.callback_query
 
-    # if "yes" the user will be registratet and is forwarded to the start menu
+    # user clicks yes and will be registered
     if query.data == "yes":
         start_menu(update, context)
         chat_id = str(query.message.chat_id)
         user_name = str(query.from_user.username)
         DB.add_user(chat_id, user_name)
 
-    # if no , no registration
+    # otherwise cancel
     elif query.data == "no":
         cancel(update, context)
 
@@ -403,9 +403,10 @@ def handle_accept_debt_is_paid(update, context):
     '''
 
     update_data = json.loads(update.callback_query.data)
-    print(update_data)
+
     is_paid = update_data['paid']
     debt_id = update_data['id']
+
     debt = DB.get_debt_by_debt_id(debt_id)
 
     DB.set_paid(debt_id, is_paid)
@@ -945,11 +946,13 @@ def callback_general(update, context):
 
     callback_data = update.callback_query.data
 
+    #action = callback_data["action"]
+
     print(json.dumps(callback_data))
 
-    if callback_data == "yes" or callback_data == "no":
+    if "yes" or "no" in callback_data:
         # identify registrierung
-        button(update, context)
+        handle_registration_response(update, context)
 
     elif callback_data[1] == ",":
         # identify schulden begleichen // handle_accept_debt
