@@ -343,8 +343,8 @@ def handle_ask_if_debt_is_paid(update, context):
     creditor = DB.get_user_by_chat_id(debt.creditor).name
     debtor = DB.get_user_by_chat_id(debt.debtor).name
 
-    data_yes = json.dumps({'paid': True, 'id': debt_id})
-    data_no = json.dumps({'paid': False, 'id': debt_id})
+    data_yes = json.dumps({'action': 'debt_paid', 'paid': True, 'id': debt_id})
+    data_no = json.dumps({'action': 'debt_paid', 'paid': False, 'id': debt_id})
 
     print(data_yes, data_no)
     keyboard = InlineKeyboardMarkup([[InlineKeyboardButton('\U0001F44D', callback_data=data_yes),
@@ -945,24 +945,26 @@ def callback_general(update, context):
     """
 
     callback_data = update.callback_query.data
-
-    #action = callback_data["action"]
+    print(callback_data)
+    action = None
+    if "action" in callback_data:
+        print(action)
+        action = callback_data["action"]
 
     print(json.dumps(callback_data))
 
-    if "yes" or "no" in callback_data:
-        # identify registrierung
-        handle_registration_response(update, context)
+    if action == "debt_paid":
 
-    elif callback_data[1] == ",":
-        # identify schulden begleichen // handle_accept_debt
-        handle_accept_debt(update, context)
-
-    elif callback_data[0] == "{":
         handle_accept_debt_is_paid(update, context)
 
-    else:
-        print("Nothing worked at all")
+    if ("yes" or "no") in callback_data:  # in json ändern
+
+        print(callback_data)
+        handle_registration_response(update, context)
+
+    elif callback_data[1] == ",":  # in json ändern
+        # identify schulden begleichen // handle_accept_debt
+        handle_accept_debt(update, context)
 
 
 def error(update, context):
