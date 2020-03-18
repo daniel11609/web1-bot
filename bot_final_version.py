@@ -32,8 +32,7 @@ LOGGER = logging.getLogger(__name__)
 # initialization of database (same folder)
 DB = Database("database.json")
 DB.init_json()
-DEBTBASE = DB.debts
-TEST_MODE = False
+TIMER_TEST_MODE = True
 
 # Range Array for conversation handler
 [
@@ -156,26 +155,6 @@ def cancel(update, context):  # abbruch in  cancel!!!!!!
     return ConversationHandler.END
 
 
-# endregion
-
-# region Timer
-
-
-# Changelog:
-#    Translated Docstrings and variable names to English
-#    TEST_MODUS renamed to TEST_MODE
-#    Added test_interval in start_timer() to simplify adjustments to the TEST_MODE
-
-
-# todo: ich frage mich: Wozu braucht man diese Funbktion ? (daniel)
-def set_debtbase(db_val: Database):
-    """
-    Set the value of Debtbase
-    Params: Database db_val
-    """
-    DEBTBASE = db_val
-
-
 def _parse_time_(time):
     """
     Conversion of the Deadline string to datetime object
@@ -224,14 +203,13 @@ def _callback_alarm(context: CallbackContext):
         creditor_cid).name) + " noch " + str(debt_text) + " bis zum " + deadline)
 
 
-def start_timer(tele_updater: UPDATER, debtbase: Database, debt_id):
+def start_timer(tele_updater: UPDATER, debt_id):
     """
     Starts the timer with a corresponding debt
     Params: UPDATER tele_updater
-            Database debtbase
             string debt_id
     """
-    set_debtbase(DEBTBASE)
+
     cur_debt = DB.get_debt_by_debt_id(debt_id)
     # Gets the current job queue of the dispatcher
     queue = tele_updater.dispatcher.job_queue
@@ -241,7 +219,7 @@ def start_timer(tele_updater: UPDATER, debtbase: Database, debt_id):
 
     test_interval = 20  # sets the time for TEST_MODE in seconds
 
-    if TEST_MODE:  # TEST_MODUS renamed to TEST_MODE
+    if TIMER_TEST_MODE:  # TEST_MODUS renamed to TEST_MODE
         queue.run_repeating(_callback_alarm, test_interval,
                             0, context=cur_debt)
 
@@ -357,8 +335,10 @@ def handle_ask_if_debt_is_paid(update, context):
     '''
 
     update_data = json.loads(update.callback_query.data)
+
     is_paid = update_data['paid']
     debt_id = update_data['id']
+
     debt = DB.get_debt_by_debt_id(debt_id)
     creditor = DB.get_user_by_chat_id(debt.creditor).name
     debtor = DB.get_user_by_chat_id(debt.debtor).name
@@ -374,10 +354,13 @@ def handle_ask_if_debt_is_paid(update, context):
         update.effective_message.edit_text(
             f'{creditor} wird verständigt.')
 
+        date_parts = debt.deadline.split(":")
+        deadline = f"{date_parts[2]}.{date_parts[1]}.{date_parts[0]}"
+
         context.bot.send_message(
             chat_id=debt.creditor,
             text=f'Wurde die Schuld über {debt.category} mit der'
-            f' Frist zum {debt.deadline} von {debtor} beglichen?',
+            f' Frist zum {deadline} von {debtor} beglichen?',
             reply_markup=keyboard)
 
     else:
@@ -933,7 +916,7 @@ def handle_accept_debt(update, context):
     if query[0] == "1":
         update.effective_message.edit_text("Du hast die Schuld angenommen.")
         DB.set_accepted(query[1], True)
-        start_timer(UPDATER, DEBTBASE, query[1])
+        start_timer(UPDATER, query[1])
 
     else:
         update.effective_message.edit_text("Du hast die Schuld abgelehnt.")
