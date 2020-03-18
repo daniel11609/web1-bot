@@ -12,9 +12,8 @@ Press Ctrl-C on the command line or send a signal to the process to stop the
 bot.
 """
 
-import logging
-import datetime
-import json
+import logging, datetime, json, os
+
 
 from telegram import (ReplyKeyboardMarkup,
                       InlineKeyboardButton, InlineKeyboardMarkup)
@@ -32,7 +31,10 @@ LOGGER = logging.getLogger(__name__)
 # initialization of database (same folder)
 DB = Database("database.json")
 DB.init_json()
+
+# Variables
 TIMER_TEST_MODE = True
+BOT_HTTP_TOKEN = os.environ.get('schuldestmirbot')
 
 # Range Array for conversation handler
 [
@@ -41,8 +43,7 @@ TIMER_TEST_MODE = True
     CHOOSING_DEBT, ASK_IF_DEBT_IS_PAID,
     CHOOSING_CLAIM, ASK_IF_CLAIM_IS_PAID] = range(8)
 
-UPDATER = Updater(
-    "1117353580:AAGS4amHBzBbydCX2edeBO2CduvGiABskjs", use_context=True)
+UPDATER = Updater(BOT_HTTP_TOKEN, use_context=True)
 
 
 def start(update, context):
