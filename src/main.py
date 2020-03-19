@@ -36,7 +36,7 @@ DB = Database("database.json")
 DB.init_json()
 
 # Variables
-TIMER_TEST_MODE = True
+TIMER_TEST_MODE = False
 BOT_HTTP_TOKEN = os.environ.get('schuldestmirbot')
 
 # Range Array for conversation handler
@@ -234,6 +234,22 @@ def start_timer(tele_updater: UPDATER, debt_id):
     else:
         queue.run_daily(_callback_alarm, time, context=cur_debt)
 
+def check_timers(tele_updater: UPDATER):
+    '''
+    Checks whether each debt has a corresponding timer running
+    
+    Params: Updater tele_updater
+    '''
+    debtlist = DB.debts
+    queue = tele_updater.dispatcher.job_queue
+
+    for debt in debtlist:
+        job_exists = False
+        for ajob in queue.jobs():
+            if ajob.context.debt_id == debt.debt_id:
+                job_exists = True
+        if not job_exists:
+            start_timer(tele_updater, debt.debt_id)
 
 def stop_timer(tele_updater: UPDATER, debt_id):
     """
@@ -1089,7 +1105,10 @@ def main():
         fallbacks=[MessageHandler(Filters.regex("^Done$"), done)]
     )
     # endregion
-
+                              
+    # Timer debt check 
+    check_timers(UPDATER)
+                              
     # Handler /ichSchulde
     i_owe_handler = ConversationHandler(
         entry_points=[CommandHandler("ichSchulde", i_owe)],
