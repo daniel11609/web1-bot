@@ -723,7 +723,7 @@ def category_type_two(update, context):
     context.user_data["debt"] = update.message.text.replace(" 🚗", "")
     reply_keyboard = [["1km", "2km", "5km"],
                       ["10km", "20km", "50km"],
-                      ["Zurück ↩‍", "Sonstiges", "Abbrechen ✖"]]
+                      ["Zurück ↩‍", "Sonstiges 📝", "Abbrechen ✖"]]
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     update.message.reply_text(f"Welchen Wert schuldet dir {context.user_data['debtor']} "
                               f"in Kategorie {context.user_data['debt']}?", reply_markup=markup)
