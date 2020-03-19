@@ -204,20 +204,19 @@ def start_timer(tele_updater: UPDATER, debt_id):
     """
 
     cur_debt = DB.get_debt_by_debt_id(debt_id)
+
     # Gets the current job queue of the dispatcher
     queue = tele_updater.dispatcher.job_queue
-
-    time_zone = datetime.datetime.now().astimezone().tzinfo
-    time = datetime.time(hour=10, minute=0, second=0, tzinfo=time_zone)
-
+    time = datetime.time(hour=10, minute=0, second=0)
     test_interval = 20  # sets the time for TEST_MODE in seconds
 
-    if TIMER_TEST_MODE:  # TEST_MODUS renamed to TEST_MODE
+    if TIMER_TEST_MODE:
         queue.run_repeating(_callback_alarm, test_interval,
                             0, context=cur_debt)
 
     else:
         queue.run_daily(_callback_alarm, time, context=cur_debt)
+
 
 def check_timers(tele_updater: UPDATER):
     '''
@@ -230,12 +229,16 @@ def check_timers(tele_updater: UPDATER):
 
     for debt in debtlist:
         job_exists = False
+
         for ajob in queue.jobs():
             if ajob.context.debt_id == debt.debt_id:
                 job_exists = True
                 break
-        if not job_exists:
+
+        if not job_exists and debt.is_accepted and not debt.is_paid:
+
             start_timer(tele_updater, debt.debt_id)
+
 
 def stop_timer(tele_updater: UPDATER, debt_id):
     """
@@ -275,10 +278,14 @@ def i_owe(update, context):
     chat_id = update.effective_message.chat.id
     debts = DB.get_open_debts(str(chat_id))
 
-    if not send_debt_list_to_user(update, debts, "Hier siehst du deine Schulden"):
-        return ConversationHandler.END
+    if DB.user_exists(str(chat_id)):
 
-    return CHOOSING_DEBT
+        if not send_debt_list_to_user(update, debts, "Hier siehst du deine Schulden"):
+            return ConversationHandler.END
+
+        return CHOOSING_DEBT
+
+    start(update, context)
 
 
 def send_debt_list_to_user(update, debts, text):
@@ -451,12 +458,17 @@ def i_get(update, context):
 
     # error CallbackContext has no attribute effective_message
     chat_id = update.effective_chat.id
+
     claims = DB.get_open_claims(str(chat_id))
 
-    if not send_claim_list_to_user(update, claims, 'Hier siehst du, was dir noch geschuldet wird'):
-        return ConversationHandler.END
+    if DB.user_exists(str(chat_id)):
 
-    return CHOOSING_CLAIM
+        if not send_claim_list_to_user(update, claims, 'Hier siehst du, was dir noch geschuldet wird'):
+            return ConversationHandler.END
+
+        return CHOOSING_CLAIM
+
+    start(update, context)
 
 
 def handle_choosing_claim(update, context):
@@ -603,16 +615,23 @@ def new_debt(update, context):
     called with /schuld command
     sends keyboard with registered users to choose from
     """
-    context.user_data.clear()
-    reply_keyboard = [["Abbrechen ✖"]]
-    for _, user in enumerate(get_user_list()):  # adds every user to array
-        # makes sure active user does not get listed
-        if update.effective_chat.id != int(user[0]):
-            reply_keyboard.append(["👤 " + user[1]])
-    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
-    update.message.reply_text(
-        "Bitte wähle einen Benutzer aus:", reply_markup=markup)
-    return USER_SELECTION
+
+    chat_id = str(update.effective_message.chat_id)
+
+    if DB.user_exists(chat_id):
+
+        context.user_data.clear()
+        reply_keyboard = [["Abbrechen ✖"]]
+        for _, user in enumerate(get_user_list()):  # adds every user to array
+            # makes sure active user does not get listed
+            if update.effective_chat.id != int(user[0]):
+                reply_keyboard.append(["👤 " + user[1]])
+        markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+        update.message.reply_text(
+            "Bitte wähle einen Benutzer aus:", reply_markup=markup)
+        return USER_SELECTION
+
+    start(update, context)
 
 
 # region user
@@ -1092,7 +1111,7 @@ def main():
     )
     # endregion
 
-    # Timer debt check 
+    # Timer debt check
     check_timers(UPDATER)
 
     # Handler /ichSchulde
