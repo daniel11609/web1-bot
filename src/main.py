@@ -175,16 +175,6 @@ def _parse_time_(time):
     due = datetime.datetime(year, month, day)
     return due
 
-# unnötig, wird nicht mehr verwendet
-# def _days_left_(deadline):
-#    """
-#    Calculates the amount of time between now and a given point in time
-#    Params: datetime deadline
-#    """
-#    now = datetime.datetime.now()
-#    delta = deadline - now
-#    return delta.days
-
 
 def _callback_alarm(context: CallbackContext):
     """
@@ -193,17 +183,12 @@ def _callback_alarm(context: CallbackContext):
     """
     cur_debt = context.job.context
 
-    debt_id = cur_debt.debt_id  # todo unused variable
     creditor_cid = cur_debt.creditor
     debtor_cid = cur_debt.debtor
     deadline_time = _parse_time_(cur_debt.deadline)
     debt_text = str(cur_debt.amount) + " " + cur_debt.category
 
     deadline = deadline_time.strftime("%d.%m.%Y")
-
-    # todo not needed
-    # if _days_left_(deadline_time) < 0:      #Checks whether the debts deadline has been reached
-    #    context.job.schedule_removal()
 
     context.bot.send_message(creditor_cid, text=str(DB.get_user_by_chat_id(
         debtor_cid).name) + " schuldet dir noch " + str(debt_text) + " bis zum " + deadline)
@@ -237,7 +222,7 @@ def start_timer(tele_updater: UPDATER, debt_id):
 def check_timers(tele_updater: UPDATER):
     '''
     Checks whether each debt has a corresponding timer running
-    
+
     Params: Updater tele_updater
     '''
     debtlist = DB.debts
@@ -248,6 +233,7 @@ def check_timers(tele_updater: UPDATER):
         for ajob in queue.jobs():
             if ajob.context.debt_id == debt.debt_id:
                 job_exists = True
+                break
         if not job_exists:
             start_timer(tele_updater, debt.debt_id)
 
@@ -1105,10 +1091,10 @@ def main():
         fallbacks=[MessageHandler(Filters.regex("^Done$"), done)]
     )
     # endregion
-                              
+
     # Timer debt check 
     check_timers(UPDATER)
-                              
+
     # Handler /ichSchulde
     i_owe_handler = ConversationHandler(
         entry_points=[CommandHandler("ichSchulde", i_owe)],
