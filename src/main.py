@@ -48,7 +48,6 @@ BOT_HTTP_TOKEN = os.environ.get('schuldestmirbot')
 UPDATER = Updater(BOT_HTTP_TOKEN, use_context=True)
 
 
-
 def start(update, context):
     """handles /start command,
     user registration
@@ -84,9 +83,12 @@ def start(update, context):
 
         else:
 
+            data_yes = json.dumps({'action': 'registration', 'data': True})
+            data_no = json.dumps({'action': 'registration', 'data': False})
+
             # yes / no keyboard
-            keyboard_yn = [[InlineKeyboardButton("\U0001F44D", callback_data="yes"),
-                            InlineKeyboardButton("\U0001F44E", callback_data="no")]]
+            keyboard_yn = [[InlineKeyboardButton("\U0001F44D", callback_data=data_yes),
+                            InlineKeyboardButton("\U0001F44E", callback_data=data_no)]]
             reply_markup = InlineKeyboardMarkup(keyboard_yn)
 
             update.message.reply_text(
@@ -130,16 +132,18 @@ def handle_registration_response(update, context):
     """
 
     query = update.callback_query
+    data = json.loads(update.callback_query.data)
+    user_response = data['data']
 
     # user clicks yes and will be registered
-    if query.data == "yes":
+    if user_response:
         start_menu(update, context)
         chat_id = str(query.message.chat_id)
         user_name = str(query.from_user.username)
         DB.add_user(chat_id, user_name)
 
     # otherwise cancel
-    elif query.data == "no":
+    else:
         cancel(update, context)
 
 
@@ -347,8 +351,8 @@ def handle_ask_if_debt_is_paid(update, context):
     creditor = DB.get_user_by_chat_id(debt.creditor).name
     debtor = DB.get_user_by_chat_id(debt.debtor).name
 
-    data_yes = json.dumps({'action': 'debt_paid', 'paid': True, 'id': debt_id})
-    data_no = json.dumps({'action': 'debt_paid', 'paid': False, 'id': debt_id})
+    data_yes = json.dumps({'p': True, 'id': debt_id})
+    data_no = json.dumps({'p': False, 'id': debt_id})
 
     print(data_yes, data_no)
     keyboard = InlineKeyboardMarkup([[InlineKeyboardButton('\U0001F44D', callback_data=data_yes),
@@ -408,7 +412,7 @@ def handle_accept_debt_is_paid(update, context):
 
     update_data = json.loads(update.callback_query.data)
 
-    is_paid = update_data['paid']
+    is_paid = update_data['p']
     debt_id = update_data['id']
 
     debt = DB.get_debt_by_debt_id(debt_id)
@@ -439,7 +443,7 @@ def i_get(update, context):
         update, context
 
     Returns:
-        CHOOSING_CLAIM {int} -- claims are existent, new state for conversation handler 
+        CHOOSING_CLAIM {int} -- claims are existent, new state for conversation handler
         ConversationHandler.END -- no claims are pending
     '''
 
@@ -829,13 +833,16 @@ def calendar_selection(update, context):
     schuld_obj = DB.add_debt(creditor_id, debt[0], debt[1], date[0], debtor_id)
 
     # Send message to prospective debtor
+
+    data_yes = json.dumps({'1': True, 'id': schuld_obj.debt_id})
+    data_no = json.dumps({'1': False, 'id': schuld_obj.debt_id})
     keyboard = InlineKeyboardMarkup(
         [
             [InlineKeyboardButton(
-                text="\U0001F44D", callback_data=f"1,{schuld_obj.debt_id}"),
+                text="\U0001F44D", callback_data=data_yes),
 
              InlineKeyboardButton(
-                 text="\U0001F44E", callback_data=f"0,{schuld_obj.debt_id}")]
+                text="\U0001F44E", callback_data=data_no)]
         ]
     )
 
@@ -914,18 +921,22 @@ def handle_accept_debt(update, context):
 
     """
 
-    query = (update.callback_query.data).split(",")
-    print(query)
-    debt = DB.get_debt_by_debt_id(query[1])
+    query = json.loads(update.callback_query.data)
+    is_accepted = query['1']
+    debt_id = query['id']
 
-    if query[0] == "1":
+    debt = DB.get_debt_by_debt_id(debt_id)
+
+    DB.set_accepted(debt_id, is_accepted)
+
+    if is_accepted:
         update.effective_message.edit_text("Du hast die Schuld angenommen.")
-        DB.set_accepted(query[1], True)
-        start_timer(UPDATER, query[1])
+
+        start_timer(UPDATER, debt_id)
 
     else:
         update.effective_message.edit_text("Du hast die Schuld abgelehnt.")
-        DB.set_accepted(query[1], False)
+
         context.bot.send_message(
             chat_id=debt.creditor, text=f"{DB.get_user_by_chat_id(debt.debtor).name}"
             f" hat die Schuld über {debt.category} abgelehnt.")
@@ -945,29 +956,27 @@ def done(update, context):
 def callback_general(update, context):
     # todo missing docstring
     """
-    #todo missing docstring
+    # todo missing docstring
     """
 
-    callback_data = update.callback_query.data
+    callback_data = json.loads(update.callback_query.data)
+    action = ""
     print(callback_data)
-    action = None
     if "action" in callback_data:
-        print(action)
         action = callback_data["action"]
 
-    print(json.dumps(callback_data))
-
-    if action == "debt_paid":
+    if "p" in callback_data:
 
         handle_accept_debt_is_paid(update, context)
 
-    if "yes" in callback_data or "no" in callback_data:  # in json ändern
+    if action == "registration":  # in json ändern
 
         print(callback_data)
         handle_registration_response(update, context)
 
-    elif callback_data[1] == ",":  # in json ändern
+    if "1" in callback_data:  # in json ändern
         # identify schulden begleichen // handle_accept_debt
+        print("handle accept debt")
         handle_accept_debt(update, context)
 
 
