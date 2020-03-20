@@ -650,7 +650,7 @@ def user_selection(update, context):
         reply_keyboard = [
             ["Getränke 🍻", "Essen 🍕", "Mobilität 🚗"],
             ["Gefallen 🧞", "Haushalt 🏘", "Geld 💸"],
-            ["Zurück ↩‍", "Sonstiges 🧳", "Abbrechen ✖"]
+            ["Zurück", "Sonstiges 🧳", "Abbrechen ✖"]
         ]
 
         markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
@@ -708,7 +708,7 @@ def category_type_one(update, context):
 
     reply_keyboard = [["1€", "2€", "3€"],
                       ["5€", "7.5€", "10€"],
-                      ["Zurück ↩‍", "Sonstiges 📝", "Abbrechen ✖"]]
+                      ["Zurück", "Sonstiges 📝", "Abbrechen ✖"]]
 
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     update.message.reply_text(f"Welchen Wert schuldet dir {context.user_data['debtor']} "
@@ -726,7 +726,7 @@ def category_type_two(update, context):
     context.user_data["type_two"] = True
     reply_keyboard = [["1km", "2km", "5km"],
                       ["10km", "20km", "50km"],
-                      ["Zurück ↩‍", "Sonstiges 📝", "Abbrechen ✖"]]
+                      ["Zurück", "Sonstiges 📝", "Abbrechen ✖"]]
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     update.message.reply_text(f"Welchen Wert schuldet dir {context.user_data['debtor']} "
                               f"in Kategorie {context.user_data['debt']}?", reply_markup=markup)
@@ -748,7 +748,7 @@ def amount_selection_back(update, context):
     reply_keyboard = [
         ["Getränke 🍻 ", "Essen 🍕", "Mobilität 🚗"],
         ["Gefallen 🧞", "Haushalt 🏘", "Geld 💸"],
-        ["Zurück ↩‍", "Sonstiges 🧳", "Abbrechen ✖"]
+        ["Zurück", "Sonstiges 🧳", "Abbrechen ✖"]
     ]
 
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
@@ -780,7 +780,7 @@ def amount_selection(update, context):
                       ["Eine Woche", "Zwei Wochen"],
                       ["Ein Monat", "3 Monate"],
                       ["Sonstiges 🗓"],
-                      ["Zurück ↩‍", "Abbrechen ✖"]]
+                      ["Zurück", "Abbrechen ✖"]]
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     update.message.reply_text(
         f"Bis wann soll {context.user_data['debtor']} die Schuld beglichen haben?",
@@ -802,7 +802,7 @@ def calendar_selection_back(update, context):
     if context.user_data["type_two"]:
         reply_keyboard = [["1km", "2km", "5km"],
                           ["10km", "20km", "50km"],
-                          ["Zurück ↩‍", "Sonstiges 📝", "Abbrechen ✖"]]
+                          ["Zurück", "Sonstiges 📝", "Abbrechen ✖"]]
     else:
         reply_keyboard = [["1€", "2€", "3€"],
                           ["5€", "7.5€", "10€"],
@@ -923,7 +923,8 @@ def date_handler(deadline):
         parts = deadline.split(".")
 
         # makes sure input is a valid date format
-        if len(parts) == 3 and parts[0].isdigit() and parts[1].isdigit() and parts[2].isdigit():
+        if len(parts) == 3 and parts[0].isdigit() and len(parts[0]) <= 2 and parts[1].isdigit() and len(parts[1]) <= 2\
+                and parts[2].isdigit() and len(parts[3]) == 4:
             date = datetime.datetime.strptime(
                 f"{parts[0]}.{parts[1]}.{parts[2]}", "%d.%m.%Y").date()
 
@@ -1062,7 +1063,7 @@ def main():
                                cancel_define_debt),
                 MessageHandler(Filters.regex("^Abbrechen"),
                                cancel_define_debt),
-                MessageHandler(Filters.regex("^Zurück ↩‍$"),
+                MessageHandler(Filters.regex("^Zurück$"),
                                category_selection_back),
                 MessageHandler(Filters.regex("^/schuld"),
                                new_debt),
@@ -1081,7 +1082,7 @@ def main():
                                               cancel_define_debt),
                                MessageHandler(Filters.regex("^Sonstiges 📝$"),
                                               amount_selection_manual),
-                               MessageHandler(Filters.regex("^Zurück ↩‍$"),
+                               MessageHandler(Filters.regex("^Zurück$"),
                                               amount_selection_back),
                                MessageHandler(Filters.regex("^/schuld"),
                                               new_debt),
@@ -1100,7 +1101,7 @@ def main():
                                                 cancel_define_debt),
                                  MessageHandler(Filters.regex("^Sonstiges 🗓$"),
                                                 calendar_selection_manual),
-                                 MessageHandler(Filters.regex("^Zurück ↩‍$"),
+                                 MessageHandler(Filters.regex("^Zurück$"),
                                                 calendar_selection_back),
                                  MessageHandler(Filters.regex("^/schuld"),
                                                 new_debt),
