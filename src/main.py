@@ -806,7 +806,7 @@ def calendar_selection_back(update, context):
     else:
         reply_keyboard = [["1€", "2€", "3€"],
                           ["5€", "7.5€", "10€"],
-                          ["Zurück ↩", "Sonstiges 📝", "Abbrechen ✖"]]
+                          ["Zurück", "Sonstiges 📝", "Abbrechen ✖"]]
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     update.message.reply_text(f"Welchen Wert Schuldet dir {context.user_data['debtor']} "
                               f"in Kategorie {context.user_data['debt']}?", reply_markup=markup)
