@@ -923,8 +923,7 @@ def date_handler(deadline):
         parts = deadline.split(".")
 
         # makes sure input is a valid date format
-        if len(parts) == 3 and parts[0].isdigit() and len(parts[0]) <= 2 and parts[1].isdigit() and len(parts[1]) <= 2\
-                and parts[2].isdigit() and len(parts[3]) == 4:
+        if len(parts) == 3 and parts[0].isdigit() and len(parts[0]) <= 2 and parts[1].isdigit() and len(parts[1]) <= 2 and parts[2].isdigit() and len(parts[2]) == 4:
             date = datetime.datetime.strptime(
                 f"{parts[0]}.{parts[1]}.{parts[2]}", "%d.%m.%Y").date()
 
