@@ -704,6 +704,8 @@ def category_type_one(update, context):
         " 🍻", "").replace(" 🍕", "").replace(" 🧞", "").replace(
             " 🏘", "").replace(" 💸", "")
 
+    context.user_data["type_two"] = False
+
     reply_keyboard = [["1€", "2€", "3€"],
                       ["5€", "7.5€", "10€"],
                       ["Zurück ↩‍", "Sonstiges 📝", "Abbrechen ✖"]]
@@ -721,6 +723,7 @@ def category_type_two(update, context):
     --> sends amount keyboard with km values
     """
     context.user_data["debt"] = update.message.text.replace(" 🚗", "")
+    context.user_data["type_two"] = True
     reply_keyboard = [["1km", "2km", "5km"],
                       ["10km", "20km", "50km"],
                       ["Zurück ↩‍", "Sonstiges 📝", "Abbrechen ✖"]]
@@ -751,7 +754,7 @@ def amount_selection_back(update, context):
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
 
     update.message.reply_text(
-        f"In welcher Kategorie schuldet dir **{context.user_data['debtor']}** etwas?",
+        f"In welcher Kategorie schuldet dir {context.user_data['debtor']} etwas?",
         reply_markup=markup)
 
     return CATEGORY_SELECTION
@@ -792,13 +795,18 @@ def amount_selection(update, context):
 def calendar_selection_back(update, context):
     """
     removes amount from userdata
-    goes back to amount selection (type one!)
+    goes back to amount selection (type sensitive)
     """
     if "amount" in context.user_data:
         del context.user_data["amount"]
-    reply_keyboard = [["1€", "2€", "3€"],
-                      ["5€", "7.5€", "10€"],
-                      ["Zurück  ↩", "Sonstiges 📝", "Abbrechen ✖"]]
+    if context.user_data["type_two"]:
+        reply_keyboard = [["1km", "2km", "5km"],
+                          ["10km", "20km", "50km"],
+                          ["Zurück ↩‍", "Sonstiges 📝", "Abbrechen ✖"]]
+    else:
+        reply_keyboard = [["1€", "2€", "3€"],
+                          ["5€", "7.5€", "10€"],
+                          ["Zurück ↩", "Sonstiges 📝", "Abbrechen ✖"]]
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     update.message.reply_text(f"Welchen Wert Schuldet dir {context.user_data['debtor']} "
                               f"in Kategorie {context.user_data['debt']}?", reply_markup=markup)
@@ -1026,7 +1034,7 @@ def main():
         # every state has high priority cancel and back functions
 
         entry_points=[CommandHandler("schuld", new_debt)],
-
+        # todo: unicode fix
         states={
             USER_SELECTION: [MessageHandler(Filters.regex("^Abbrechen ✖$"),
                                             cancel_define_debt),
