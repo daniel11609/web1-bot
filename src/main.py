@@ -314,7 +314,7 @@ def send_debt_list_to_user(update, debts, text):
         buttons.append(
             [
                 InlineKeyboardButton(
-                    f'{debt.category} an '
+                    f'{debt.category} - {debt.amount} an '
                     f'{DB.get_user_by_chat_id(debt.creditor).name} bis {deadline}',
                     callback_data=debt.debt_id)
             ]
@@ -376,7 +376,7 @@ def handle_ask_if_debt_is_paid(update, context):
 
         context.bot.send_message(
             chat_id=debt.creditor,
-            text=f'Wurde die Schuld über {debt.category} mit der'
+            text=f'Wurde die Schuld über {debt.category} - {debt.amount} mit der'
             f' Frist zum {deadline} von {debtor} beglichen?',
             reply_markup=keyboard)
 
@@ -440,7 +440,7 @@ def handle_accept_debt_is_paid(update, context):
         context.bot.send_message(
             chat_id=debt.debtor,
             text=f'{DB.get_user_by_chat_id(debt.creditor).name}'
-            f' hat deine Anfrage zum Begleichen von {debt.category} nicht akzeptiert.')
+            f' hat deine Anfrage zum Begleichen von {debt.category} - {debt.amount} nicht akzeptiert.')
 
     return ConversationHandler.END
 
@@ -533,7 +533,7 @@ def send_claim_list_to_user(update, claims, text):
         deadline = f"{date_parts[2]}.{date_parts[1]}.{date_parts[0]}"
 
         buttons.append([InlineKeyboardButton(
-            f'{debt.category} von  {(DB.get_user_by_chat_id(debt.debtor)).name} '
+            f'{debt.category} - {debt.amount} von {(DB.get_user_by_chat_id(debt.debtor)).name} '
             f'bis {deadline}',
             callback_data=debt.debt_id)])
 
@@ -968,7 +968,7 @@ def handle_accept_debt(update, context):
 
         context.bot.send_message(
             chat_id=debt.creditor, text=f"{DB.get_user_by_chat_id(debt.debtor).name}"
-            f" hat die Schuld über {debt.category} abgelehnt.")
+            f" hat die Schuld über {debt.category} - {debt.amount} abgelehnt.")
 
 
 def done(update, context):
