@@ -303,7 +303,7 @@ def send_debt_list_to_user(update, debts, text):
 
     if len(debts) == 0:
         update.effective_message.reply_text(
-            "Es sind keine offenen Einträge vorhanden")
+            "Es sind keine offenen Einträge vorhanden.")
         return False
 
     buttons = []
@@ -525,7 +525,7 @@ def send_claim_list_to_user(update, claims, text):
 
     if len(claims) == 0:
         update.effective_message.reply_text(
-            'Es sind keine offenen Einträge vorhanden')
+            'Es sind keine offenen Einträge vorhanden.')
         return False
     buttons = []
     for debt in claims:
