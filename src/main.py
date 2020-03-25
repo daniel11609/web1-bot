@@ -1014,6 +1014,30 @@ def error(update, context):
     LOGGER.warning('Update "%s" caused error "%s"', update, context.error)
 
 
+def cancel_i_get(update, context):
+    query = update.callback_query
+    bot = context.bot
+    
+    bot.edit_message_text(
+        chat_id=query.message.chat_id,
+        message_id=query.message.message_id,
+        text="Mit /ichBekomme kannst du erneut einsehen, was dir wer schuldet"
+    )
+    context.user_data.clear()
+    return ConversationHandler.END
+
+def cancel_i_owe(update, context):
+    query = update.callback_query
+    bot = context.bot
+    
+    bot.edit_message_text(
+        chat_id=query.message.chat_id,
+        message_id=query.message.message_id,
+        text="Mit /ichSchulde kannst du erneut einsehen, wem du was schuldest"
+    )
+    context.user_data.clear()
+    return ConversationHandler.END
+
 # todo main docstring
 def main():
     """
@@ -1130,7 +1154,7 @@ def main():
             ASK_IF_DEBT_IS_PAID: [
                 CallbackQueryHandler(handle_ask_if_debt_is_paid)]
         },
-        fallbacks=[CommandHandler("ichSchulde", i_owe)]
+        fallbacks=[CommandHandler("abbrechenIchSchulde", cancel_i_owe)]
     )
     # Handler /ichBekomme
     i_get_handler = ConversationHandler(
@@ -1140,7 +1164,7 @@ def main():
             ASK_IF_CLAIM_IS_PAID: [
                 CallbackQueryHandler(handle_ask_if_claim_is_paid)]
         },
-        fallbacks=[CommandHandler("ichBekomme", i_get)]
+        fallbacks=[CommandHandler("abbrechenIchBekomme", cancel_i_get)]
     )
 
     # endregion
