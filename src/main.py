@@ -147,8 +147,8 @@ def handle_registration_response(update, context):
         cancel(update, context)
 
 
-def cancel(update, context):  # abbruch in  cancel!!!!!!
-    """close the chat
+def cancel(update, context):
+    """closes the chat
     """
     query = update.callback_query
     bot = context.bot
@@ -1017,7 +1017,7 @@ def error(update, context):
 def cancel_i_get(update, context):
     query = update.callback_query
     bot = context.bot
-    
+
     bot.edit_message_text(
         chat_id=query.message.chat_id,
         message_id=query.message.message_id,
@@ -1026,10 +1026,11 @@ def cancel_i_get(update, context):
     context.user_data.clear()
     return ConversationHandler.END
 
+
 def cancel_i_owe(update, context):
     query = update.callback_query
     bot = context.bot
-    
+
     bot.edit_message_text(
         chat_id=query.message.chat_id,
         message_id=query.message.message_id,
@@ -1039,6 +1040,8 @@ def cancel_i_owe(update, context):
     return ConversationHandler.END
 
 # todo main docstring
+
+
 def main():
     """
     todo main docstring
