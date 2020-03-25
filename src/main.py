@@ -846,7 +846,7 @@ def calendar_selection(update, context):
                 text="\U0001F44D", callback_data=data_yes),
 
              InlineKeyboardButton(
-                text="\U0001F44E", callback_data=data_no)]
+                 text="\U0001F44E", callback_data=data_no)]
         ]
     )
 
@@ -1030,7 +1030,6 @@ def main():
         # every state has high priority cancel and back functions
 
         entry_points=[CommandHandler("schuld", new_debt)],
-        # todo: unicode fix
         states={
             USER_SELECTION: [MessageHandler(Filters.regex("^Abbrechen ✖$"),
                                             cancel_define_debt),
@@ -1113,7 +1112,6 @@ def main():
 
         fallbacks=[MessageHandler(Filters.regex("^Done$"), done)]
     )
-    # endregion
 
     # Timer debt check
     check_timers(UPDATER)
@@ -1128,6 +1126,7 @@ def main():
         },
         fallbacks=[CommandHandler("abbrechenIchSchulde", cancel_i_owe)]
     )
+
     # Handler /ichBekomme
     i_get_handler = ConversationHandler(
         entry_points=[CommandHandler("ichBekomme", i_get)],
@@ -1138,8 +1137,6 @@ def main():
         },
         fallbacks=[CommandHandler("abbrechenIchBekomme", cancel_i_get)]
     )
-
-    # endregion
 
     UPDATER.dispatcher.add_handler(CommandHandler("start", start))
 
