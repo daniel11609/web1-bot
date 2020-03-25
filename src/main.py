@@ -257,10 +257,6 @@ def stop_timer(tele_updater: UPDATER, debt_id):
             return True
     return False
 
-# endregion
-
-# region settle debts
-
 
 def i_owe(update, context):
     """Responds to "/ichSchulde" command,
@@ -560,11 +556,6 @@ def ask_if_claim_paid(update):
 
     update.effective_message.edit_text(
         'Wurde die Schuld bereits beglichen?', reply_markup=keyboard)
-# endregion
-
-# region define debt
-
-### helper methods ###
 
 
 def cancel_define_debt(update, context):
@@ -608,8 +599,6 @@ def get_user_list():
     return users
 
 
-### conversation handler methods ###
-
 def new_debt(update, context):
     """
     called with /schuld command
@@ -633,8 +622,6 @@ def new_debt(update, context):
 
     start(update, context)
 
-
-# region user
 
 def user_selection(update, context):
     """
@@ -666,10 +653,6 @@ def user_selection(update, context):
 
     return USER_SELECTION
 
-
-# endregion
-
-# region category
 
 def category_selection_back(update, context):
     """
@@ -733,10 +716,6 @@ def category_type_two(update, context):
     return AMOUNT_SELECTION
 
 
-# endregion
-
-# region amount
-
 def amount_selection_back(update, context):
     """
     deletes debt from userdata
@@ -787,10 +766,6 @@ def amount_selection(update, context):
         reply_markup=markup)
     return CALENDAR_SELECTION
 
-
-# endregion
-
-# region calendar
 
 def calendar_selection_back(update, context):
     """
@@ -939,9 +914,6 @@ def date_handler(deadline):
     return None
 
 
-# endregion calendar
-
-
 def handle_accept_debt(update, context):
     """
     handles user input from acccept/deny debt
@@ -979,7 +951,6 @@ def done(update, context):
     user_data = context.user_data
     user_data.clear()
     return ConversationHandler.END
-# endregion
 
 
 def callback_general(update, context):
@@ -1038,8 +1009,6 @@ def cancel_i_owe(update, context):
     )
     context.user_data.clear()
     return ConversationHandler.END
-
-# todo main docstring
 
 
 def main():
