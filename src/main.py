@@ -954,28 +954,28 @@ def done(update, context):
 
 
 def callback_general(update, context):
-    # todo missing docstring
     """
-    # todo missing docstring
+    General callback handler for debt is paid, registration and accept debt.
     """
 
     callback_data = json.loads(update.callback_query.data)
     action = ""
-    print(callback_data)
     if "action" in callback_data:
         action = callback_data["action"]
 
-    if "p" in callback_data:
 
+    # handle accept debt as paid
+    if "p" in callback_data:
         handle_accept_debt_is_paid(update, context)
 
-    if action == "registration":  # in json ändern
-
+    # handle registration
+    if action == "registration":
         print(callback_data)
         handle_registration_response(update, context)
 
-    if "1" in callback_data:  # in json ändern
-        # identify schulden begleichen // handle_accept_debt
+    # handle_accept_debt
+    if "1" in callback_data:
+
         print("handle accept debt")
         handle_accept_debt(update, context)
 
