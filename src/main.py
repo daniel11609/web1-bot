@@ -969,13 +969,10 @@ def callback_general(update, context):
 
     # handle registration
     if action == "registration":
-        print(callback_data)
         handle_registration_response(update, context)
 
     # handle_accept_debt
     if "1" in callback_data:
-
-        print("handle accept debt")
         handle_accept_debt(update, context)
 
 
