@@ -963,7 +963,6 @@ def callback_general(update, context):
     if "action" in callback_data:
         action = callback_data["action"]
 
-
     # handle accept debt as paid
     if "p" in callback_data:
         handle_accept_debt_is_paid(update, context)
