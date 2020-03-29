@@ -1009,8 +1009,7 @@ def cancel_i_owe(update, context):
 
 def main():
     """
-    todo main docstring
-
+    Main function: contains handlers, starts the dispatcher
     """
 
     se_conv_handler = ConversationHandler(
