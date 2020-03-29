@@ -23,7 +23,7 @@ $ pip install python-telegram-bot -upgrade
 
 ### Telegramaccount
 
-Um den Telegram-Bot in Betrieb zu nehmen, wird natürlich zu allererst ein TelegramAccount benötigt. 
+Um den Telegram-Bot in Betrieb zu nehmen, wird zu allererst ein TelegramAccount benötigt. 
 
 ## Botfather
 
@@ -54,5 +54,31 @@ Mit dem Befehl
 nimmt man den Chatbot in Betrieb. Dieser fragt bei der Erstbenutzung, ob man sich registrieren will.
 Hier kann man mit 'ja' oder 'nein' antworten. 
 
-Nach der Registrierung ist der Bot startklar. 
+Nach der Registrierung ist der Bot startbereit. 
+
+### Befehle
+
+Mit dem Befehl 
+```bash
+/schuld 
+```
+kann man einem registrierten User Schulden zuweisen. Hierfür wählt man die Art, Menge und das Datum, zu der die Schuld spätestens beglichen sein soll. 
+Der Schuldner bekommt daraufhin eine Bestätigungsbenachrichtigung, in der er die Schuld bestätigen/ablehnen kann. 
+Wenn die Schuld bestätigt wurde, bekommen Schuldner und Gläubiger in regelmäßigen Abständen eine Benachrichtigung, welche an die Schuld erinnern soll.   
+
+Mit dem Befehl 
+```bash
+/ichBekomme 
+```
+kann sich der User alle seine ausstehenden Forderungen anzeigen lassen. 
+Durch Auswahl einer Schuld kann der Gläubiger diese jederzeit als beglichen markieren.   
+
+Mit dem Befehl 
+```bash
+/ichSchulde 
+```
+kann sich der User alle seine ausstehenden Schulden anzeigen lassen. Durch Auswahl einer Schuld kann die Begleichung angefragt werden. 
+Der Gläubiger bekommt in diesem Fall eine Benachrichtigung, um zu bestätigen, ob die Schuld wirklich beglichen wurde. 
+Erst nachdem es bestätigt wurde, gilt die Schuld als beglichen und wird auch so gespeichert.   
+
  
