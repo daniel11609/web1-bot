@@ -37,7 +37,7 @@ DB.init_json()
 
 # Variables
 TIMER_TEST_MODE = False
-BOT_HTTP_TOKEN = os.environ.get('schuldestmirbot')
+BOT_HTTP_TOKEN = ""# API TOKEN EINFÜGEN
 
 # Range Array for conversation handler
 [USER_SELECTION, CATEGORY_SELECTION,
